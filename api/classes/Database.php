@@ -2,11 +2,13 @@
 class Database
 {
 
+     
+
     // CHANGE THE DB INFO ACCORDING TO YOUR DATABASE CONFIGURATION
-    private $db_host = 'localhost';
-    private $db_name = 'php_auth_api';
-    private $db_username = 'root';
-    private $db_password = 'root'; //if password is available for your MySQL db specify here
+    private $db_host = "remotemysql.com:3306";
+    private $db_name = 'mLLrkupzOI';
+    private $db_username = 'mLLrkupzOI';
+    private $db_password = 'ROeAsocsD9'; //if password is available for your MySQL db specify here
 
     public function dbConnection()
     {

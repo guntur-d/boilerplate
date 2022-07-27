@@ -34,12 +34,14 @@ elseif (
     !isset($data->name)
     || !isset($data->email)
     || !isset($data->password)
+    || !isset($data->roles)
     || empty(trim($data->name))
     || empty(trim($data->email))
     || empty(trim($data->password))
+    || empty(trim($data->roles))
 ):
 
-    $fields = ['fields' => ['name', 'email', 'password']];
+    $fields = ['fields' => ['name', 'email', 'password', 'roles']];
     $returnData = msg(0, 422, 'Please Fill in all Required Fields!', $fields);
 
 // IF THERE ARE NO EMPTY FIELDS THEN-
@@ -48,6 +50,7 @@ else:
     $name = trim($data->name);
     $email = trim($data->email);
     $password = trim($data->password);
+    $roles = $data->roles;
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)):
         $returnData = msg(0, 422, 'Invalid Email Address!');
 
@@ -69,12 +72,12 @@ else:
             $returnData = msg(0, 422, 'This E-mail already in use!');
 
         else:
-            $insert_query = "INSERT INTO users (name, email, password) VALUES(?,?,?)";
+            $insert_query = "INSERT INTO users (name, email, password, roles) VALUES(?,?,?,?)";
 
             $insert_stmt = $conn->prepare($insert_query);
 
             $passtodb = password_hash($password, PASSWORD_DEFAULT);
-            $insert_stmt->bind_param('sss', $name, $email, $passtodb);
+            $insert_stmt->bind_param('sssj', $name, $email, $passtodb, $roles);
 
             $insert_stmt->execute();
 
