@@ -1,6 +1,15 @@
 <?php
 require __DIR__ . '/JwtHandler.php';
 
+function msg($success, $status, $message, $extra = [])
+{
+    return array_merge([
+        'success' => $success,
+        'status' => $status,
+        'message' => $message,
+    ], $extra);
+}
+
 class Auth extends JwtHandler
 {
     protected $db;
@@ -24,12 +33,12 @@ class Auth extends JwtHandler
             if (
                 isset($data['data']->user_id) &&
                 $user = $this->fetchUser($data['data']->user_id)
-            ) :
+            ):
                 return [
                     "success" => 1,
-                    "user" => $user
+                    "user" => $user,
                 ];
-            else :
+            else:
                 return [
                     "success" => 0,
                     "message" => $data['message'],
@@ -38,26 +47,30 @@ class Auth extends JwtHandler
         } else {
             return [
                 "success" => 0,
-                "message" => "Token not found in request"
+                "message" => "Token not found in request",
             ];
         }
     }
 
     protected function fetchUser($user_id)
     {
-      
-            $fetch_user_by_id = "SELECT `name`,`email` FROM `users` WHERE `id`=?";
+
+        try {
+            $fetch_user_by_id = "SELECT `name`,`email`, `roles` FROM `users` WHERE `id`=?";
             $query_stmt = $this->db->prepare($fetch_user_by_id);
             $query_stmt->bind_param("i", $user_id);
-           
-            $query_stmt->execute();
-            $result =  $query_stmt->get_result();
 
-            if ($result->num_rows>0) :
+            $query_stmt->execute();
+            $result = $query_stmt->get_result();
+
+            if ($result->num_rows > 0):
                 return $result->fetch_assoc();
-            else :
+            else:
                 return false;
             endif;
-       
+        } catch (mysqli_sql_exception $e) {
+            $returnData = msg(0, 500, $e->getMessage());
+        }
+
     }
 }

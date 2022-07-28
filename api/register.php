@@ -62,28 +62,36 @@ else:
 
     else:
 
-        $check_email = "SELECT email FROM users WHERE email=?";
-        $check_email_stmt = $conn->prepare($check_email);
-        $check_email_stmt->bind_param('s', $email);
-        $check_email_stmt->execute();
-        $result = $check_email_stmt->get_result(); // get the mysqli result
+        try {
 
-        if ($result->num_rows > 0):
-            $returnData = msg(0, 422, 'This E-mail already in use!');
+            $driver = new mysqli_driver();
+            $driver->report_mode = MYSQLI_REPORT_ALL;
 
-        else:
-            $insert_query = "INSERT INTO users (name, email, password, roles) VALUES(?,?,?,?)";
+            $check_email = "SELECT email FROM users WHERE email=?";
+            $check_email_stmt = $conn->prepare($check_email);
+            $check_email_stmt->bind_param('s', $email);
+            $check_email_stmt->execute();
+            $result = $check_email_stmt->get_result(); // get the mysqli result
 
-            $insert_stmt = $conn->prepare($insert_query);
+            if ($result->num_rows > 0):
+                $returnData = msg(0, 422, 'This E-mail already in use!');
 
-            $passtodb = password_hash($password, PASSWORD_DEFAULT);
-            $insert_stmt->bind_param('sssj', $name, $email, $passtodb, $roles);
+            else:
+                $insert_query = "INSERT INTO users (name, email, password, roles) VALUES(?,?,?,?)";
 
-            $insert_stmt->execute();
+                $insert_stmt = $conn->prepare($insert_query);
 
-            $returnData = msg(1, 201, 'You have successfully registered.');
+                $passtodb = password_hash($password, PASSWORD_DEFAULT);
+                $insert_stmt->bind_param('ssss', $name, $email, $passtodb, $roles);
 
-        endif;
+                $insert_stmt->execute();
+
+                $returnData = msg(1, 201, 'You have successfully registered.');
+
+            endif;
+        } catch (mysqli_sql_exception $e) {
+            $returnData = msg(0, 500, $e->getMessage());
+        }
 
     endif;
 endif;

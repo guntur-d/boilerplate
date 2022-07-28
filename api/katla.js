@@ -3,15 +3,25 @@ var maybe = []
 words.map(w=>{
     if(
         // w.charAt(1)=="a" && w.charAt(2)=="w"  && w.charAt(3)=="a" 
-        w.charAt(0) !="r" &&
         w.charAt(0) !="b" &&
-        w.charAt(0) !="s" &&
-        w.charAt(2) !="m" &&
-        w.charAt(2) !="s" &&
+        w.charAt(0) !="i" &&
+        w.charAt(0) !="c" &&
+        w.charAt(1) !="a" &&
+        w.charAt(1) !="n" &&
+  
+        // w.charAt(0) !="s" &&
+        w.charAt(2) !="g" &&
+        w.charAt(2) !="d" &&
+        w.charAt(2) !="r" &&
         
-        w.charAt(3) == "i" &&
-        w.charAt(1)=="a" &&
-     w.charAt(4)=="h"){maybe.push(w)}
+        
+        w.charAt(2) == "e" &&
+        w.charAt(4)=="e" &&
+        w.charAt(3)=="t" //&&
+     //w.charAt(4)=="h"
+     )
+     
+     {maybe.push(w)}
 })
 
 console.log(maybe)
